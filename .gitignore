@@ -1,0 +1,28 @@
+# ignore binaries
+*.dll
+*.exe
+*.com
+*.class
+
+# ignore compacted files
+*.zip
+*.bzip2
+*.gzip
+*.gz
+*.rar
+*.7z
+*.tar
+
+# ignore log files
+*.log
+
+# ignore pdf
+*.pdf
+
+# ignore maven folder
+/target
+
+# ignora eclipse files and folders
+.settings/
+.classpath
+.project
