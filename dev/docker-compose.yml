@@ -29,8 +29,7 @@ services:
         "spring.datasource.password":"$MYSQLDB_ROOT_PASSWORD",
         "spring.jpa.properties.hibernate.dialect":"org.hibernate.dialect.MySQL5InnoDBDialect",
         "server.port":"8080",
-        "springdoc.swagger-ui.path":"/v1/api-doc.html",
-        "springdoc.pathsToMatch":"/v1"
+        "springdoc.swagger-ui.path":"/v1/api-doc.html"
       }'
     volumes:
       - .m2:/root/.m2

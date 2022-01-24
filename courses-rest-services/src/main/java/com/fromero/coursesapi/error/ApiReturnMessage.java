@@ -10,6 +10,7 @@ public enum ApiReturnMessage implements Serializable {
 	STUDENT_REGISTERED(1, "Student registered. Id = %d", HttpStatus.OK),
 	STUDENT_UPDATED(2, "Student data updated. Id = %d", HttpStatus.OK),
 	STUDENT_DELETED(3, "Student excluded. Id = %d", HttpStatus.OK),
+	STUDENT_RATING_UPDATED(4, "Student id = %d updated the rating to %d for the course id %d", HttpStatus.OK),
 	
 	COURSE_REGISTERED(10, "Course registered. Id = %d", HttpStatus.OK),
 	COURSE_UPDATED(11, "Course data updated. Id = %d", HttpStatus.OK),
@@ -25,6 +26,7 @@ public enum ApiReturnMessage implements Serializable {
 	ERR_MAXIMUM_STUDENTS_BY_COURSE_REACHED(10003, "The course id = %d reached the maximum of %d students.", HttpStatus.BAD_REQUEST),
 	ERR_STUDENT_ALREADY_ENROLLED(10004, "Student id = %d is already enrolled to the course id = %d", HttpStatus.BAD_REQUEST),
 	ERR_STUDENT_IS_NOT_ENROLLED(10005, "Student id = %d is not enrolled to the course id = %d", HttpStatus.BAD_REQUEST),
+	ERR_RATING_OUT_OF_RANGE(10006, "Rating = %d is out of the range (%d,%d)", HttpStatus.BAD_REQUEST),
 	;
 	
 	private int code;

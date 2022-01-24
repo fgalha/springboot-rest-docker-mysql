@@ -4,6 +4,9 @@
 *.com
 *.class
 
+# maven repository
+.m2
+
 # ignore compacted files
 *.zip
 *.bzip2

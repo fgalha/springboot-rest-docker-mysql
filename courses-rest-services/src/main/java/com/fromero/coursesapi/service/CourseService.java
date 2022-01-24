@@ -10,7 +10,6 @@ import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
 import com.fromero.coursesapi.model.Course;
-import com.fromero.coursesapi.model.Student;
 import com.fromero.coursesapi.repository.CourseRepository;
 
 @Service
@@ -26,8 +25,8 @@ public class CourseService implements Serializable {
         return Streamable.of(courseRepository.findAll()).toList();
     }
 
-    public void saveCourse(Course course) {
-    	courseRepository.save(course);
+    public Course saveCourse(Course course) {
+    	return courseRepository.save(course);
     }
 
     public Course getCourse(Integer id) {

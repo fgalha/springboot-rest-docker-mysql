@@ -7,10 +7,11 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
+import com.fromero.coursesapi.dto.Rating;
+import com.fromero.coursesapi.dto.StudentDTO;
 import com.fromero.coursesapi.error.ApiReturnMessage;
 import com.fromero.coursesapi.errorhandling.BusinessErrorException;
 import com.fromero.coursesapi.model.Course;
@@ -27,15 +28,12 @@ public class StudentService implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Value("${courses.api.maximumCoursesByStudent:5}")
-	private int maximumCoursesByStudent;
-
-	@Value("${courses.api.maximumStudentsByCourse:50}")
-	private int maximumStudentsByCourse;
+	@Autowired
+	private ParameterService parameterService;
 
 	@Autowired
 	private StudentRepository studentRepository;
-	
+
 	@Autowired
 	private CourseStudentRepository courseStudentRepository;
 
@@ -62,15 +60,18 @@ public class StudentService implements Serializable {
 		CourseStudentKey key = new CourseStudentKey(student.getId(), course.getId());
 		Optional<CourseStudent> op = courseStudentRepository.findById(key);
 		if (op.isPresent()) {
-			throw new BusinessErrorException(ApiReturnMessage.ERR_STUDENT_ALREADY_ENROLLED, student.getId(), course.getId());
+			throw new BusinessErrorException(ApiReturnMessage.ERR_STUDENT_ALREADY_ENROLLED, student.getId(),
+					course.getId());
 		}
 		int totalCourses = studentRepository.getTotalCoursesEnrolled(student.getId());
-		if (totalCourses > maximumCoursesByStudent) {
-			throw new BusinessErrorException(ApiReturnMessage.ERR_MAXIMUM_COURSES_BY_STUDENT_REACHED, student.getId(), maximumCoursesByStudent);
+		if (totalCourses > parameterService.getMaximumCoursesByStudent()) {
+			throw new BusinessErrorException(ApiReturnMessage.ERR_MAXIMUM_COURSES_BY_STUDENT_REACHED, student.getId(),
+					parameterService.getMaximumCoursesByStudent());
 		}
 		int totalStudents = courseRepository.getTotalStudentsEnrolled(course.getId());
-		if (totalStudents > maximumStudentsByCourse) {
-			throw new BusinessErrorException(ApiReturnMessage.ERR_MAXIMUM_STUDENTS_BY_COURSE_REACHED, course.getId(), maximumStudentsByCourse);
+		if (totalStudents > parameterService.getMaximumStudentsByCourse()) {
+			throw new BusinessErrorException(ApiReturnMessage.ERR_MAXIMUM_STUDENTS_BY_COURSE_REACHED, course.getId(),
+					parameterService.getMaximumStudentsByCourse());
 		}
 		CourseStudent cs = new CourseStudent();
 		cs.setId(key);
@@ -83,15 +84,8 @@ public class StudentService implements Serializable {
 		CourseStudentKey key = new CourseStudentKey(student.getId(), course.getId());
 		Optional<CourseStudent> op = courseStudentRepository.findById(key);
 		if (!op.isPresent()) {
-			throw new BusinessErrorException(ApiReturnMessage.ERR_STUDENT_IS_NOT_ENROLLED, student.getId(), course.getId());
-		}
-		int totalCourses = studentRepository.getTotalCoursesEnrolled(student.getId());
-		if (totalCourses > maximumCoursesByStudent) {
-			throw new BusinessErrorException(ApiReturnMessage.ERR_MAXIMUM_COURSES_BY_STUDENT_REACHED, student.getId(), maximumCoursesByStudent);
-		}
-		int totalStudents = courseRepository.getTotalStudentsEnrolled(course.getId());
-		if (totalStudents > maximumStudentsByCourse) {
-			throw new BusinessErrorException(ApiReturnMessage.ERR_MAXIMUM_STUDENTS_BY_COURSE_REACHED, course.getId(), maximumStudentsByCourse);
+			throw new BusinessErrorException(ApiReturnMessage.ERR_STUDENT_IS_NOT_ENROLLED, student.getId(),
+					course.getId());
 		}
 		CourseStudent cs = new CourseStudent();
 		cs.setId(key);
@@ -100,11 +94,28 @@ public class StudentService implements Serializable {
 		courseStudentRepository.deleteById(key);
 	}
 
-	public List<Student> listAllStudentsByCourse(Integer idcourse) {
+	public List<StudentDTO> listAllStudentsByCourse(Integer idcourse) {
 		return studentRepository.listByCourses(idcourse);
 	}
 
 	public List<Student> listAllStudentsWithoutCourses() {
 		return studentRepository.listAllStudentsWithoutCourses();
+	}
+
+	public void updateStudentRating(Student student, Course course, Rating rating) {
+		if (rating.getValue() < parameterService.getMinimumRating()
+				|| rating.getValue() > parameterService.getMaximumRating()) {
+			throw new BusinessErrorException(ApiReturnMessage.ERR_RATING_OUT_OF_RANGE, rating.getValue(), 
+					parameterService.getMinimumRating(), parameterService.getMaximumRating());
+		}
+		CourseStudentKey key = new CourseStudentKey(student.getId(), course.getId());
+		Optional<CourseStudent> op = courseStudentRepository.findById(key);
+		if (!op.isPresent()) {
+			throw new BusinessErrorException(ApiReturnMessage.ERR_STUDENT_IS_NOT_ENROLLED, student.getId(),
+					course.getId());
+		}
+		CourseStudent cs = op.get();
+		cs.setRating(rating.getValue());
+		courseStudentRepository.save(cs);
 	}
 }
