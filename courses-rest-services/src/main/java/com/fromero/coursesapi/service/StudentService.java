@@ -44,19 +44,25 @@ public class StudentService implements Serializable {
 		return Streamable.of(studentRepository.findAll()).toList();
 	}
 
-	public void saveStudent(Student student) {
-		studentRepository.save(student);
+	public Student saveStudent(Student student) {
+		return studentRepository.save(student);
 	}
 
 	public Student getStudent(Integer id) {
+		if (id == null) {
+			throw new BusinessErrorException(ApiReturnMessage.ERR_ID_NOT_INFORMED);
+		}
 		return studentRepository.findById(id).get();
 	}
 
 	public void deleteStudent(Integer id) {
+		if (id == null) {
+			throw new BusinessErrorException(ApiReturnMessage.ERR_ID_NOT_INFORMED);
+		}
 		studentRepository.deleteById(id);
 	}
 
-	public void registerCourse(Student student, Course course) {
+	public boolean registerCourse(Student student, Course course) {
 		CourseStudentKey key = new CourseStudentKey(student.getId(), course.getId());
 		Optional<CourseStudent> op = courseStudentRepository.findById(key);
 		if (op.isPresent()) {
@@ -64,12 +70,12 @@ public class StudentService implements Serializable {
 					course.getId());
 		}
 		int totalCourses = studentRepository.getTotalCoursesEnrolled(student.getId());
-		if (totalCourses > parameterService.getMaximumCoursesByStudent()) {
+		if (totalCourses >= parameterService.getMaximumCoursesByStudent()) {
 			throw new BusinessErrorException(ApiReturnMessage.ERR_MAXIMUM_COURSES_BY_STUDENT_REACHED, student.getId(),
 					parameterService.getMaximumCoursesByStudent());
 		}
 		int totalStudents = courseRepository.getTotalStudentsEnrolled(course.getId());
-		if (totalStudents > parameterService.getMaximumStudentsByCourse()) {
+		if (totalStudents >= parameterService.getMaximumStudentsByCourse()) {
 			throw new BusinessErrorException(ApiReturnMessage.ERR_MAXIMUM_STUDENTS_BY_COURSE_REACHED, course.getId(),
 					parameterService.getMaximumStudentsByCourse());
 		}
@@ -78,9 +84,10 @@ public class StudentService implements Serializable {
 		cs.setStudent(student);
 		cs.setCourse(course);
 		courseStudentRepository.save(cs);
+		return true;
 	}
 
-	public void unregisterCourse(Student student, Course course) {
+	public boolean unregisterCourse(Student student, Course course) {
 		CourseStudentKey key = new CourseStudentKey(student.getId(), course.getId());
 		Optional<CourseStudent> op = courseStudentRepository.findById(key);
 		if (!op.isPresent()) {
@@ -92,9 +99,13 @@ public class StudentService implements Serializable {
 		cs.setStudent(student);
 		cs.setCourse(course);
 		courseStudentRepository.deleteById(key);
+		return true;
 	}
 
 	public List<StudentDTO> listAllStudentsByCourse(Integer idcourse) {
+		if (idcourse == null) {
+			throw new BusinessErrorException(ApiReturnMessage.ERR_ID_NOT_INFORMED);
+		}
 		return studentRepository.listByCourses(idcourse);
 	}
 
@@ -102,7 +113,7 @@ public class StudentService implements Serializable {
 		return studentRepository.listAllStudentsWithoutCourses();
 	}
 
-	public void updateStudentRating(Student student, Course course, Rating rating) {
+	public boolean updateStudentRating(Student student, Course course, Rating rating) {
 		if (rating.getValue() < parameterService.getMinimumRating()
 				|| rating.getValue() > parameterService.getMaximumRating()) {
 			throw new BusinessErrorException(ApiReturnMessage.ERR_RATING_OUT_OF_RANGE, rating.getValue(), 
@@ -117,5 +128,6 @@ public class StudentService implements Serializable {
 		CourseStudent cs = op.get();
 		cs.setRating(rating.getValue());
 		courseStudentRepository.save(cs);
+		return true;
 	}
 }

@@ -1,4 +1,4 @@
-package com.fromero.coursesapi.control.v1;
+package com.fromero.coursesapi.controller.v1;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -115,6 +115,10 @@ public class CourseController {
         }
     }
     
+    /**
+     * List all the courses without a student enrolled.
+     * @return list of all the courses without a student enrolled.
+     */
     @GetMapping("/list-no-students")
     public List<Course> listNoStudents() {
         return courseService.listAllCoursesWithoutStudents();

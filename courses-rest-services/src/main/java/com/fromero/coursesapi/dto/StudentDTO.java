@@ -26,7 +26,7 @@ public class StudentDTO implements Serializable {
 		this.email = student.getEmail();
 	}
 
-	public StudentDTO(Student student, int rating) {
+	public StudentDTO(Student student, Integer rating) {
 		this(student);
 		this.rating = rating;
 	}
