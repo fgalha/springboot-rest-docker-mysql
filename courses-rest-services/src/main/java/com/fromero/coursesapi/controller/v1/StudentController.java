@@ -1,4 +1,4 @@
-package com.fromero.coursesapi.control.v1;
+package com.fromero.coursesapi.controller.v1;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -49,8 +49,9 @@ public class StudentController {
         }
     }
     @PostMapping("/")
-    public void add(@RequestBody Student student) {
-        studentService.saveStudent(student);
+    public ResponseEntity<Object> add(@RequestBody Student student) {
+        Student savedStudent =  studentService.saveStudent(student);
+        return ResponseMessageUtil.from(ApiReturnMessage.STUDENT_REGISTERED, savedStudent.getId());
     }
     
     @PutMapping("/{id}")

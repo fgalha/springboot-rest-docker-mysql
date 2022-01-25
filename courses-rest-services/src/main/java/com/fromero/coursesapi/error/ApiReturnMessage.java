@@ -27,6 +27,7 @@ public enum ApiReturnMessage implements Serializable {
 	ERR_STUDENT_ALREADY_ENROLLED(10004, "Student id = %d is already enrolled to the course id = %d", HttpStatus.BAD_REQUEST),
 	ERR_STUDENT_IS_NOT_ENROLLED(10005, "Student id = %d is not enrolled to the course id = %d", HttpStatus.BAD_REQUEST),
 	ERR_RATING_OUT_OF_RANGE(10006, "Rating = %d is out of the range (%d,%d)", HttpStatus.BAD_REQUEST),
+	ERR_ID_NOT_INFORMED(10007," Id not informed", HttpStatus.BAD_REQUEST)
 	;
 	
 	private int code;
