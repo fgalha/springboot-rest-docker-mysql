@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fromero.coursesapi.controller.v1.StudentController;
+import com.fromero.coursesapi.dto.CourseDTO;
 import com.fromero.coursesapi.dto.Rating;
 import com.fromero.coursesapi.error.ApiReturnMessage;
 import com.fromero.coursesapi.errorhandling.BusinessErrorException;
@@ -142,7 +144,8 @@ public class StudentControllerTest {
 		when(courseService.getCourse(400)).thenThrow(new NoSuchElementException());
 		
 		// list courses by user
-		when(courseService.listAllCoursesByStudent(1)).thenReturn(courses.subList(3, 5));
+		when(courseService.listAllCoursesByStudent(1))
+				.thenReturn(courses.stream().map(c -> new CourseDTO(c, 90)).collect(Collectors.toList()));
 		
 		// list students without courses
 		when(studentService.listAllStudentsWithoutCourses()).thenReturn(students.subList(1, 3));
@@ -154,10 +157,6 @@ public class StudentControllerTest {
 	private Student createStudent(Integer id, String name, String email) {
 		return new Student(id, name, email, null);
 	}
-
-//	private StudentDTO createStudentDTO(Integer id, String name, String email, Integer rating) {
-//		return new StudentDTO(new Student(id, name, email, null), rating);
-//	}
 
 	private Course createCourse(Integer id, String name) {
 		return new Course(id, name, null);
@@ -299,7 +298,7 @@ public class StudentControllerTest {
 	public void test_list_courses_success() throws Exception {
 		this.mockMvc.perform(get(SERVICE_VERSION + "/1/list-courses")).andDo(print()).andExpect(status().isOk())
 		.andExpect(content().string(containsString(
-				"[{\"id\":4,\"name\":\"Machine Learning I\"},{\"id\":5,\"name\":\"Machine Learning II\"}]")));
+				"[{\"id\":1,\"name\":\"Algorithms I\",\"rating\":90},{\"id\":2,\"name\":\"Algorithms II\",\"rating\":90},{\"id\":3,\"name\":\"Operational Systems\",\"rating\":90},{\"id\":4,\"name\":\"Machine Learning I\",\"rating\":90},{\"id\":5,\"name\":\"Machine Learning II\",\"rating\":90}]")));
     }
 
 	@Test

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
+import com.fromero.coursesapi.dto.CourseDTO;
 import com.fromero.coursesapi.error.ApiReturnMessage;
 import com.fromero.coursesapi.errorhandling.BusinessErrorException;
 import com.fromero.coursesapi.model.Course;
@@ -45,7 +46,7 @@ public class CourseService implements Serializable {
     	courseRepository.deleteById(id);
     }
 
-	public List<Course> listAllCoursesByStudent(Integer id) {
+	public List<CourseDTO> listAllCoursesByStudent(Integer id) {
     	if (id == null) {
 			throw new BusinessErrorException(ApiReturnMessage.ERR_ID_NOT_INFORMED);
 		}    	

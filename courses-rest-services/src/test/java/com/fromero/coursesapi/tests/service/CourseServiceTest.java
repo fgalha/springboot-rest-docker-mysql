@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.fromero.coursesapi.dto.CourseDTO;
 import com.fromero.coursesapi.error.ApiReturnMessage;
 import com.fromero.coursesapi.errorhandling.BusinessErrorException;
 import com.fromero.coursesapi.model.Course;
@@ -116,13 +117,13 @@ public class CourseServiceTest {
 	@Test
 	public void testListAllCoursesByStudent_success() {
 		int i = 0;
-		List<Course> courses = new ArrayList<Course>();
-		courses.add(createCourse(++i, "Algorithms I"));
-		courses.add(createCourse(++i, "Algorithms II"));
+		List<CourseDTO> courses = new ArrayList<CourseDTO>();
+		courses.add(new CourseDTO(createCourse(++i, "Algorithms I"), 80));
+		courses.add(new CourseDTO(createCourse(++i, "Algorithms II"), 90));
 
 		when(courseRepository.listCoursesByStudent(any(Integer.class))).thenReturn(courses);
 		
-		List<Course> list = courseService.listAllCoursesByStudent(1);
+		List<CourseDTO> list = courseService.listAllCoursesByStudent(1);
 		assertEquals(2, list.size());
 		assertEquals(list.get(0).getId(), 1);
 		assertEquals(list.get(1).getId(), 2);
