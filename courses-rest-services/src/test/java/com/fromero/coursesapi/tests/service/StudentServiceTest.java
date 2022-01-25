@@ -239,7 +239,10 @@ public class StudentServiceTest {
 		int i = 0;
 		StudentDTO s1 = new StudentDTO(createStudent(++i, "Alice Test", "alice.test@abc123.com"), 90);
 		StudentDTO s2 = new StudentDTO(createStudent(++i, "Bob Test", "bob.test@abc123.com"), 95);
-		when(studentRepository.listByCourses(any(Integer.class))).thenReturn(List.of(s1, s2));
+		List<StudentDTO> result = new ArrayList<StudentDTO>();
+		result.add(s1);
+		result.add(s2);
+		when(studentRepository.listByCourses(any(Integer.class))).thenReturn(result);
 		
 		List<StudentDTO> list = studentService.listAllStudentsByCourse(1);
 		assertEquals(2, list.size());
@@ -252,8 +255,11 @@ public class StudentServiceTest {
 		int i = 0;
 		Student s1 = createStudent(++i, "Alice Test", "alice.test@abc123.com");
 		Student s2 = createStudent(++i, "Bob Test", "bob.test@abc123.com");
+		List<Student> result = new ArrayList<Student>();
+		result.add(s1);
+		result.add(s2);
 		
-		when(studentRepository.listAllStudentsWithoutCourses()).thenReturn(List.of(s1, s2));
+		when(studentRepository.listAllStudentsWithoutCourses()).thenReturn(result);
 		
 		List<Student> list = studentService.listAllStudentsWithoutCourses();
 		assertEquals(2, list.size());
