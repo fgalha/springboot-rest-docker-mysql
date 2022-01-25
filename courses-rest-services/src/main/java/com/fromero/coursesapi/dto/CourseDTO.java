@@ -20,7 +20,7 @@ public class CourseDTO implements Serializable {
 		this.name = course.getName(); 
 	}
 
-	public CourseDTO(Course course, int rating) {
+	public CourseDTO(Course course, Integer rating) {
 		this(course);
 		this.rating = rating;
 	}
