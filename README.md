@@ -27,8 +27,8 @@ In order to start the application run:
 
 ### Clone the repository and run docker compose (remove -d option to see console attached):
 ```
-git clone https://github.com/fgalha/springboot-rest-docker-mysql.git -d
-docker compose -f springboot-rest-docker-mysql/dev/docker-compose.yml up
+git clone https://github.com/fgalha/springboot-rest-docker-mysql.git
+docker compose -f springboot-rest-docker-mysql/dev/docker-compose.yml up -d
 ```
 
 ###### For windows use:
